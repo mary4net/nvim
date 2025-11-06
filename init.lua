@@ -84,6 +84,8 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+local home = vim.fn.expand '~'
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -120,10 +122,14 @@ vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
 
+vim.opt.textwidth = 90
+vim.opt.formatoptions:append 't'
+
 -- tab/indent length
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 -- vim.opt.softtabstop = 4
+vim.opt.expandtab = true
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -174,6 +180,7 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 
 require 'custom.configs.base-mappings'
+require 'custom.configs.highlight_on_yank'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -529,42 +536,42 @@ require('lazy').setup({
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
-          map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+          -- Jump to the definition of the word under your cursor.
+          --  This is where a variable was first declared, or where a function is defined, etc.
+          --  To jump back, press <C-t>.
+          map('gdd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
           map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
-          -- Jump to the definition of the word under your cursor.
-          --  This is where a variable was first declared, or where a function is defined, etc.
-          --  To jump back, press <C-t>.
-          map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
-          map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-          -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
-          map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
-
-          -- Fuzzy find all the symbols in your current workspace.
-          --  Similar to document symbols, except searches over your entire project.
-          map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
+          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          map('gD', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+
+          -- Fuzzy find all the symbols in your current document.
+          --  Symbols are things like variables, functions, types, etc.
+          map('gds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+
+          -- Fuzzy find all the symbols in your current workspace.
+          --  Similar to document symbols, except searches over your entire project.
+          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+          -- Rename the variable under your cursor.
+          --  Most Language Servers support renaming across files, etc.
+          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+
+          -- Execute a code action, usually your cursor needs to be on top of an error
+          -- or a suggestion from your LSP for this to activate.
+          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+
+          -- WARN: This is not Goto Definition, this is Goto Declaration.
+          --  For example, in C this would take you to the header.
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -675,20 +682,20 @@ require('lazy').setup({
           --   fallbackFlags = { '-D_GNU_SOURCE' },
           -- },
         },
-        sqls = {
-          filetypes = { 'sql', 'ddl' },
-          root_dir = require('lspconfig.util').root_pattern('.git', 'db-schema.sql'),
-          settings = {
-            sqls = {
-              connections = {
-                {
-                  driver = 'postgresql',
-                  dataSourceName = 'host=mcsdb.utm.utoronto.ca user=xuruili password=94926 dbname=xuruili_343 sslmode=disable',
-                },
-              },
-            },
-          },
-        },
+        -- sqls = {
+        --   filetypes = { 'sql', 'ddl' },
+        --   root_dir = require('lspconfig.util').root_pattern('.git', 'db-schema.sql'),
+        --   settings = {
+        --     sqls = {
+        --       connections = {
+        --         {
+        --           driver = 'postgresql',
+        --           dataSourceName = 'host=mcsdb.utm.utoronto.ca user=xuruili password=94926 dbname=xuruili_343 sslmode=disable',
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
         -- gopls = {},
         pyright = {},
         -- rust_analyzer = {},
@@ -701,7 +708,18 @@ require('lazy').setup({
         ts_ls = {},
         eslint = {},
         --
-
+        jdtls = {
+          settings = {
+            java = {
+              format = {
+                settings = {
+                  url = 'file://' .. home .. '/.config/nvim/eclipse-formatter.xml',
+                  profile = 'NeovimFormatter',
+                },
+              },
+            },
+          },
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -738,13 +756,13 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        automatic_enable = true,
         ensure_installed = {
           'clangd',
           'lua_ls',
           'pyright',
           'eslint',
           'ts_ls',
-          'sqls',
         },
         automatic_installation = true,
         handlers = {
@@ -754,7 +772,13 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            if server.settings then
+              print('🔧 configuring ' .. server_name .. ' with lspconfig')
+              require('lspconfig')[server_name].setup(server)
+            else
+              vim.lsp.config(server_name, server)
+              vim.lsp.enable(server_name, server)
+            end
           end,
         },
       }
@@ -776,12 +800,12 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true, hpp = true, sql = true }
+        local disable_filetypes = { c = true, cpp = true, hpp = true, sql = true, json = true, python = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return false
@@ -796,28 +820,30 @@ require('lazy').setup({
         c = { 'clang-format' },
         cpp = { 'clang-format' },
         hpp = { 'clang-format' },
-        sql = { 'sql-formatter' },
+        -- sql = { 'sql-formatter' },
         -- Conform can also run multiple formatters sequentially
         python = { 'autopep8', 'isort', 'black' },
-        json = { fixjson },
+        java = { 'jdtls' },
+        -- json = { 'fixjson' },
+        -- jsonc = { 'deno' },
+        -- javascript = { 'eslint' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        -- javascript = { 'prettierd', 'prettier', stop_after_first = true },
       },
       formatters = {
         ['clang-format'] = {
           prepend_args = { '--style={SortIncludes: Never}' },
           -- prepend_args = { '--style={IndentWidth: 4, UseTab: ForIndentation, TabWidth: 4, SortIncludes: Never}' },
         },
-      },
-      formatters = {
-        ['clang-format'] = {
-          prepend_args = { '--style={IndentWidth: 4, UseTab: ForIndentation, TabWidth: 4, SortIncludes: Never}' },
-        },
-      },
-      formatters = {
-        ['clang-format'] = {
-          prepend_args = { '--style={IndentWidth: 4, UseTab: ForIndentation, TabWidth: 4, SortIncludes: Never}' },
+        ['deno'] = {
+          command = 'deno',
+          args = function()
+            -- vim.api.nvim_buf_get_name(0) 返回当前 buffer 的绝对路径
+            return { 'fmt', '$FILENAME' }
+          end,
+          stdin = false,
+          tmpfile_format = '.conform.$RANDOM.$FILENAME',
         },
       },
     },
@@ -927,26 +953,81 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+
+    -- 'folke/tokyonight.nvim',
+    -- priority = 1000, -- Make sure to load this before all the other start plugins.
+    -- config = function()
+    --   ---@diagnostic disable-next-line: missing-fields
+    --   require('tokyonight').setup {
+    --     transparent = true,
+    --     styles = {
+    --       sidebars = 'transparent',
+    --       floats = 'transparent',
+    --       -- comments = { italic = false }, -- Disable italics in comments
+    --     },
+    --
+    --     -- You can configure highlights by doing something like:
+    --     on_highlights = function(hl_table, color_table)
+    --       local from = hl_table.Comment.fg
+    --       for group, opts in pairs(hl_table) do
+    --         if opts.fg == from then
+    --           opts.fg = color_table.fg_dark
+    --         end
+    --         if opts.bg == from then
+    --           opts.bg = color_table.fg_dark
+    --         end
+    --         if opts.sp == from then
+    --           opts.sp = color_table.fg_dark
+    --         end
+    --       end
+    --       hl_table.LineNrAbove = { fg = color_table.fg_dark }
+    --       hl_table.LineNrBelow = { fg = color_table.fg_dark }
+    --     end,
+    --   }
+    --   -- Load the colorscheme here.
+    --   -- Like many other themes, this one has different styles, and you could load
+    --   -- any other, such as 'tokyonight-night', tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+    --   vim.cmd.colorscheme 'tokyonight-moon'
+    -- end,
+
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        transparent = true,
-        styles = {
-          sidebars = 'transparent',
-          floats = 'transparent',
-          -- comments = { italic = false }, -- Disable italics in comments
+      require('catppuccin').setup {
+        flavour = 'auto', -- latte, frappe, macchiato, mocha
+        background = { -- :h background
+          light = 'latte',
+          dark = 'frappe',
         },
+        transparent_background = true,
+        float = {
+          transparent = false, -- enable transparent floating windows
+          solid = false, -- use solid styling for floating windows, see |winborder|
+        },
+        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+          comments = { 'italic' }, -- Change the style of comments
+          conditionals = { 'italic' },
+          loops = {},
+          functions = {},
+          keywords = {},
+          strings = {},
+          variables = {},
+          numbers = {},
+          booleans = {},
+          properties = {},
+          types = {},
+          operators = {},
+          -- miscs = {}, -- Uncomment to turn off hard-coded styles
+        },
+        auto_integrations = true,
       }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-night', tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-day'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      vim.cmd.colorscheme 'catppuccin'
+      vim.api.nvim_set_hl(0, 'CursorLine', {
+        underline = true,
+        sp = '#a6adc8', -- frappe 的高亮蓝灰
+        bg = 'none',
+      })
     end,
   },
 
@@ -1053,6 +1134,9 @@ require('lazy').setup({
   require 'custom.plugins.debugger.c',
   require 'custom.plugins.debugger.python',
   require 'custom.plugins.git',
+  require 'custom.plugins.md',
+  require 'custom.plugins.codecompanion',
+  require 'custom.plugins.copilot',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -1083,6 +1167,3 @@ require('lazy').setup({
     },
   },
 })
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
