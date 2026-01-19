@@ -1,4 +1,4 @@
-require 'kickstart.plugins.nvim-window-picker'
+require 'plugins.nvim-window-picker'
 
 return {
   -- If you want neo-tree's file operations to work with LSP (updating imports, etc.), you can use a plugin like

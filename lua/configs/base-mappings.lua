@@ -49,3 +49,4 @@ vim.keymap.set('n', '<C-s>', save_session, { desc = 'save session' })
 vim.keymap.set('t', '<C-s>', save_session, { desc = 'save session' })
 vim.keymap.set('n', '<C-a>', restore_session, { desc = 'restore session' })
 vim.keymap.set('t', '<C-a>', restore_session, { desc = 'restore session' })
+

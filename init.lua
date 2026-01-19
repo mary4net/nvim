@@ -93,7 +93,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = true
+vim.g.have_nerd_font = false
 
 -- vim.opt.guifont = 'JetBrainsMono Nerd Font:h12'
 
@@ -128,7 +128,7 @@ vim.opt.formatoptions:append 't'
 -- tab/indent length
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
--- vim.opt.softtabstop = 4
+vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 
 -- Enable break indent
@@ -179,8 +179,8 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
-require 'custom.configs.base-mappings'
-require 'custom.configs.highlight_on_yank'
+require 'configs.base-mappings'
+require 'configs.highlight_on_yank'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -682,6 +682,7 @@ require('lazy').setup({
           --   fallbackFlags = { '-D_GNU_SOURCE' },
           -- },
         },
+        -- glsl_analyzer = {},
         -- sqls = {
         --   filetypes = { 'sql', 'ddl' },
         --   root_dir = require('lspconfig.util').root_pattern('.git', 'db-schema.sql'),
@@ -697,7 +698,8 @@ require('lazy').setup({
         --   },
         -- },
         -- gopls = {},
-        pyright = {},
+        ruff = {},
+        jedi_language_server = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -705,21 +707,21 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
+        -- ts_ls = {},
         eslint = {},
         --
-        jdtls = {
-          settings = {
-            java = {
-              format = {
-                settings = {
-                  url = 'file://' .. home .. '/.config/nvim/eclipse-formatter.xml',
-                  profile = 'NeovimFormatter',
-                },
-              },
-            },
-          },
-        },
+        -- jdtls = {
+        --   settings = {
+        --     java = {
+        --       format = {
+        --         settings = {
+        --           url = 'file://' .. home .. '/.config/nvim/eclipse-formatter.xml',
+        --           profile = 'NeovimFormatter',
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -760,9 +762,6 @@ require('lazy').setup({
         ensure_installed = {
           'clangd',
           'lua_ls',
-          'pyright',
-          'eslint',
-          'ts_ls',
         },
         automatic_installation = true,
         handlers = {
@@ -948,89 +947,6 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-
-    -- 'folke/tokyonight.nvim',
-    -- priority = 1000, -- Make sure to load this before all the other start plugins.
-    -- config = function()
-    --   ---@diagnostic disable-next-line: missing-fields
-    --   require('tokyonight').setup {
-    --     transparent = true,
-    --     styles = {
-    --       sidebars = 'transparent',
-    --       floats = 'transparent',
-    --       -- comments = { italic = false }, -- Disable italics in comments
-    --     },
-    --
-    --     -- You can configure highlights by doing something like:
-    --     on_highlights = function(hl_table, color_table)
-    --       local from = hl_table.Comment.fg
-    --       for group, opts in pairs(hl_table) do
-    --         if opts.fg == from then
-    --           opts.fg = color_table.fg_dark
-    --         end
-    --         if opts.bg == from then
-    --           opts.bg = color_table.fg_dark
-    --         end
-    --         if opts.sp == from then
-    --           opts.sp = color_table.fg_dark
-    --         end
-    --       end
-    --       hl_table.LineNrAbove = { fg = color_table.fg_dark }
-    --       hl_table.LineNrBelow = { fg = color_table.fg_dark }
-    --     end,
-    --   }
-    --   -- Load the colorscheme here.
-    --   -- Like many other themes, this one has different styles, and you could load
-    --   -- any other, such as 'tokyonight-night', tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-    --   vim.cmd.colorscheme 'tokyonight-moon'
-    -- end,
-
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    config = function()
-      require('catppuccin').setup {
-        flavour = 'auto', -- latte, frappe, macchiato, mocha
-        background = { -- :h background
-          light = 'latte',
-          dark = 'frappe',
-        },
-        transparent_background = true,
-        float = {
-          transparent = false, -- enable transparent floating windows
-          solid = false, -- use solid styling for floating windows, see |winborder|
-        },
-        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-          comments = { 'italic' }, -- Change the style of comments
-          conditionals = { 'italic' },
-          loops = {},
-          functions = {},
-          keywords = {},
-          strings = {},
-          variables = {},
-          numbers = {},
-          booleans = {},
-          properties = {},
-          types = {},
-          operators = {},
-          -- miscs = {}, -- Uncomment to turn off hard-coded styles
-        },
-        auto_integrations = true,
-      }
-      vim.cmd.colorscheme 'catppuccin'
-      vim.api.nvim_set_hl(0, 'CursorLine', {
-        underline = true,
-        sp = '#a6adc8', -- frappe 的高亮蓝灰
-        bg = 'none',
-      })
-    end,
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1123,20 +1039,29 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  require 'kickstart.plugins.indent_line',
-  require 'kickstart.plugins.lint',
-  require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.nvim-window-picker',
-  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'plugins.indent_line',
+  require 'plugins.lint',
+  require 'plugins.autopairs',
+  require 'plugins.neo-tree',
+  require 'plugins.nvim-window-picker',
+  require 'plugins.gitsigns', -- adds gitsigns recommend keymaps
 
-  require 'custom.plugins.debugger',
-  require 'custom.plugins.debugger.c',
-  require 'custom.plugins.debugger.python',
-  require 'custom.plugins.git',
-  require 'custom.plugins.md',
-  require 'custom.plugins.codecompanion',
-  require 'custom.plugins.copilot',
+  -- require 'plugins.debugger',
+  -- require 'plugins.debugger.c',
+  -- require 'plugins.debugger.python',
+
+  require 'plugins.git',
+  require 'plugins.md',
+  require 'plugins.distant',
+
+  require 'plugins.ai',
+
+  -- require 'plugins.themes.ayu',
+  require 'plugins.themes.catpuccin',
+  require 'plugins.themes.cursor_animation',
+
+  require 'plugins.flutter',
+  require 'plugins.cscope',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
