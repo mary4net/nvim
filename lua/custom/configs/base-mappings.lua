@@ -56,3 +56,13 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+-- save/restore session
+local file = vim.fn.getcwd() .. '/Session.vim'
+local save_session = '<cmd>mksession! ' .. file .. '<CR><cmd>echo "session saved"<CR>'
+local restore_session = '<cmd>source ' .. file .. '<CR><cmd>echo "session restored"<CR>'
+
+vim.keymap.set('n', '<C-s>', save_session, { desc = 'save session' })
+vim.keymap.set('t', '<C-s>', save_session, { desc = 'save session' })
+vim.keymap.set('n', '<C-a>', restore_session, { desc = 'restore session' })
+vim.keymap.set('t', '<C-a>', restore_session, { desc = 'restore session' })

@@ -122,6 +122,7 @@ vim.opt.showmode = false
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 -- vim.opt.softtabstop = 4
+vim.opt.expandtab = true
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -160,6 +161,37 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+-- ~/.config/nvim/lua/custom/clipboard.lua
+-- Use Python's pyperclip for clipboard integration (no sudo needed)
+
+-- vim.g.clipboard = {
+--   name = 'pyperclip',
+--   copy = {
+--     ['+'] = {
+--       'python3',
+--       '-c',
+--       'import sys, pyperclip; data=sys.stdin.read(); pyperclip.copy(data)',
+--     },
+--     ['*'] = {
+--       'python3',
+--       '-c',
+--       'import sys, pyperclip; data=sys.stdin.read(); pyperclip.copy(data)',
+--     },
+--   },
+--   paste = {
+--     ['+'] = {
+--       'python3',
+--       '-c',
+--       "import pyperclip; print(pyperclip.paste(), end='')",
+--     },
+--     ['*'] = {
+--       'python3',
+--       '-c',
+--       "import pyperclip; print(pyperclip.paste(), end='')",
+--     },
+--   },
+-- }
 
 require 'custom.configs.base-mappings'
 
@@ -660,6 +692,7 @@ require('lazy').setup({
             },
           },
         },
+        jdtls = {},
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -748,7 +781,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true, sql = true }
+        local disable_filetypes = { c = true, cpp = true, sql = true, java = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           lsp_format_opt = 'never'
@@ -767,6 +800,7 @@ require('lazy').setup({
         sql = {},
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
+        java = { 'google-java-formatter' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -895,21 +929,45 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-moon'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    config = function()
+      require('catppuccin').setup {
+        flavour = 'auto', -- latte, frappe, macchiato, mocha
+        background = { -- :h background
+          light = 'latte',
+          dark = 'frappe',
+        },
+        transparent_background = true,
+        float = {
+          transparent = false, -- enable transparent floating windows
+          solid = false, -- use solid styling for floating windows, see |winborder|
+        },
+        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+          comments = { 'italic' }, -- Change the style of comments
+          conditionals = { 'italic' },
+          loops = {},
+          functions = {},
+          keywords = {},
+          strings = {},
+          variables = {},
+          numbers = {},
+          booleans = {},
+          properties = {},
+          types = {},
+          operators = {},
+          -- miscs = {}, -- Uncomment to turn off hard-coded styles
+        },
+        auto_integrations = true,
+      }
+      vim.cmd.colorscheme 'catppuccin'
+      vim.api.nvim_set_hl(0, 'CursorLine', {
+        underline = true,
+        sp = '#a6adc8', -- frappe 的高亮蓝灰
+        bg = 'none',
+      })
     end,
   },
 
@@ -959,7 +1017,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -990,7 +1048,7 @@ require('lazy').setup({
   --     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
   --     'MunifTanjim/nui.nvim',
   --     -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
-  --   },
+  --   },ini
   --   window = {
   --     position = 'left',
   --     width = 20,
@@ -1009,7 +1067,7 @@ require('lazy').setup({
   require 'custom.plugins.debugger',
   require 'custom.plugins.debugger.c',
   -- require 'kickstart.plugins.indent_line',
-  require 'kickstart.plugins.lint',
+  -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.nvim-window-picker',
