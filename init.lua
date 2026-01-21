@@ -697,20 +697,20 @@ require('lazy').setup({
             fallbackFlags = { '-D_GNU_SOURCE' },
           },
         },
-        sqls = {
-          filetypes = { 'sql', 'ddl' },
-          root_dir = require('lspconfig.util').root_pattern('.git', 'db-schema.sql'),
-          settings = {
-            sqls = {
-              connections = {
-                {
-                  driver = 'postgresql',
-                  dataSourceName = 'host=mcsdb.utm.utoronto.ca user=xuruili password=94926 dbname=xuruili_343 sslmode=disable',
-                },
-              },
-            },
-          },
-        },
+        -- sqls = {
+        --   filetypes = { 'sql', 'ddl' },
+        --   root_dir = require('lspconfig.util').root_pattern('.git', 'db-schema.sql'),
+        --   settings = {
+        --     sqls = {
+        --       connections = {
+        --         {
+        --           driver = 'postgresql',
+        --           dataSourceName = 'host=mcsdb.utm.utoronto.ca user=xuruili password=94926 dbname=xuruili_343 sslmode=disable',
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
         jdtls = {},
         -- gopls = {},
         -- pyright = {},
@@ -816,7 +816,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
-        sql = {},
+        -- sql = {},
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
         java = { 'google-java-formatter' },
