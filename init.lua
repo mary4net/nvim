@@ -700,6 +700,7 @@ require('lazy').setup({
         -- gopls = {},
         ruff = {},
         jedi_language_server = {},
+        rust_analyzer = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -1046,9 +1047,9 @@ require('lazy').setup({
   require 'plugins.nvim-window-picker',
   require 'plugins.gitsigns', -- adds gitsigns recommend keymaps
 
-  -- require 'plugins.debugger',
+  require 'plugins.debugger',
   -- require 'plugins.debugger.c',
-  -- require 'plugins.debugger.python',
+  require 'plugins.debugger.python',
 
   require 'plugins.git',
   require 'plugins.md',
@@ -1057,7 +1058,9 @@ require('lazy').setup({
   require 'plugins.ai',
 
   -- require 'plugins.themes.ayu',
-  require 'plugins.themes.catpuccin',
+  -- require 'plugins.themes.catpuccin',
+  require 'plugins.themes.everforest',
+
   require 'plugins.themes.cursor_animation',
 
   require 'plugins.flutter',
@@ -1091,4 +1094,23 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+})
+
+-- 创建一个自动命令组
+local open_media = vim.api.nvim_create_augroup('OpenMedia', { clear = true })
+
+vim.api.nvim_create_autocmd('BufReadPost', {
+  group = open_media,
+  pattern = { '*.pdf', '*.png', '*.jpg', '*.jpeg', '*.gif', '*.webp' },
+  callback = function()
+    -- 获取当前文件的绝对路径
+    local file = vim.fn.expand '%:p'
+
+    -- 使用系统默认程序打开 (Arch Linux 推荐 xdg-open)
+    -- 如果你是在 macOS 上，请将 "xdg-open" 改为 "open"
+    vim.fn.jobstart({ 'xdg-open', file }, { detach = true })
+
+    -- 立即关闭在 nvim 中打开的那个乱码/二进制 Buffer
+    -- vim.api.nvim_buf_delete(0, { force = true })
+  end,
 })

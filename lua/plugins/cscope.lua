@@ -11,7 +11,7 @@ return {
     -- DEFAULTS ARE LISTED BELOW
     cscope = {
       -- The -R flag is mandatory for the Linux kernel folder structure
-      db_build_cmd_args = { '-bqR' },
+      db_build_cmd = { args = { '-bqR' } },
     },
   },
 }

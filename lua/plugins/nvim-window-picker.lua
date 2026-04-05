@@ -11,7 +11,7 @@ return {
       hint = 'floating-big-letter',
       -- when you go to window selection mode, status bar will show one of
       -- following letters on them so you can use that letter to select the window
-      selection_chars = 'ABCDEFG',
+      selection_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 
       -- following filters are only applied when you are using the default filter
       -- defined by this plugin. If you pass in a function to "filter_func"
