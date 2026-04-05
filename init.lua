@@ -179,37 +179,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- ~/.config/nvim/lua/custom/clipboard.lua
--- Use Python's pyperclip for clipboard integration (no sudo needed)
-
--- vim.g.clipboard = {
---   name = 'pyperclip',
---   copy = {
---     ['+'] = {
---       'python3',
---       '-c',
---       'import sys, pyperclip; data=sys.stdin.read(); pyperclip.copy(data)',
---     },
---     ['*'] = {
---       'python3',
---       '-c',
---       'import sys, pyperclip; data=sys.stdin.read(); pyperclip.copy(data)',
---     },
---   },
---   paste = {
---     ['+'] = {
---       'python3',
---       '-c',
---       "import pyperclip; print(pyperclip.paste(), end='')",
---     },
---     ['*'] = {
---       'python3',
---       '-c',
---       "import pyperclip; print(pyperclip.paste(), end='')",
---     },
---   },
--- }
-
 require 'configs.base-mappings'
 require 'configs.highlight_on_yank'
 
@@ -279,38 +248,37 @@ require('lazy').setup({
   },
 
   -- ssh clipboard features
-  -- {
-  --   'ojroques/nvim-osc52', -- 插件名称
-  --   config = function()
-  --     require('osc52').setup {
-  --       max_length = 0,
-  --       silent = false,
-  --       trim = false,
-  --       tmux_passthrough = false,
-  --     }
-  --
-  --     local function copy(lines, _)
-  --       require('osc52').copy(table.concat(lines, '\n'))
-  --     end
-  --
-  --
-  --     local function paste()
-  --       return { vim.fn.split(vim.fn.getreg '', '\n'), vim.fn.getregtype '' }
-  --     end
-  --
-  --     vim.g.clipboard = {
-  --       name = 'osc52',
-  --       copy = { ['+'] = copy, ['*'] = copy },
-  --       paste = { ['+'] = paste, ['*'] = paste },
-  --     }
-  --
-  --     vim.keymap.set('n', 'y', '"+y')
-  --     vim.keymap.set('v', 'y', '"+y')
-  --     vim.keymap.set('n', 'yy', '"+yy')
-  --     -- vim.keymap.set('n', 'p', '"+p') -- 从系统剪贴板粘贴内容
-  --     -- vim.keymap.set('n', 'P', '"+P') -- 粘贴在光标前
-  --   end,
-  -- },
+  {
+    'ojroques/nvim-osc52', -- 插件名称
+    config = function()
+      require('osc52').setup {
+        max_length = 0,
+        silent = false,
+        trim = false,
+        tmux_passthrough = false,
+      }
+
+      local function copy(lines, _)
+        require('osc52').copy(table.concat(lines, '\n'))
+      end
+
+      local function paste()
+        return { vim.fn.split(vim.fn.getreg '', '\n'), vim.fn.getregtype '' }
+      end
+
+      vim.g.clipboard = {
+        name = 'osc52',
+        copy = { ['+'] = copy, ['*'] = copy },
+        paste = { ['+'] = paste, ['*'] = paste },
+      }
+
+      vim.keymap.set('n', 'y', '"+y')
+      vim.keymap.set('v', 'y', '"+y')
+      vim.keymap.set('n', 'yy', '"+yy')
+      -- vim.keymap.set('n', 'p', '"+p') -- 从系统剪贴板粘贴内容
+      -- vim.keymap.set('n', 'P', '"+P') -- 粘贴在光标前
+    end,
+  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -705,13 +673,13 @@ require('lazy').setup({
 
       local servers = {
         clangd = {
-          -- cmd = { 'clangd', '--compile-commands-dir=build', '--header-insertion=never' },
-          cmd = { 'clangd' },
-          -- init_options = {
-          --   compilationDatabasePath = 'build',
-          --   clangdFileStatus = true,
-          --   fallbackFlags = { '-D_GNU_SOURCE' },
-          -- },
+          -- -- cmd = { 'clangd', '--compile-commands-dir=build', '--header-insertion=never' },
+          -- cmd = { 'clangd' },
+          -- -- init_options = {
+          -- --   compilationDatabasePath = 'build',
+          -- --   clangdFileStatus = true,
+          -- --   fallbackFlags = { '-D_GNU_SOURCE' },
+          -- -- },
         },
         -- glsl_analyzer = {},
         -- sqls = {
