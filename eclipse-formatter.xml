@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles version="20">
+    <profile name="NeovimFormatter" version="20" kind="CodeFormatterProfile">
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_between_method_declarations" value="2"/>
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="2"/>
+    </profile>
+</profiles>
+
