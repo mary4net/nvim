@@ -9,8 +9,10 @@ return {
 
     -- Only one of these is needed.
     'nvim-telescope/telescope.nvim', -- optional
-    'ibhagwan/fzf-lua', -- optional
-    'echasnovski/mini.pick', -- optional
-    'folke/snacks.nvim', -- optional
+    -- 'ibhagwan/fzf-lua', -- optional
+    -- 'echasnovski/mini.pick', -- optional
+    -- 'folke/snacks.nvim', -- optional
   },
+  -- Or via lua api
+  vim.keymap.set('n', '<leader>gg', '<cmd>Neogit<cr>', { desc = 'Open Neogit UI' }),
 }

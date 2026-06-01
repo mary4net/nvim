@@ -1,3 +1,5 @@
+-- the cross-platform frontend framework (iOS, Android, Web)
+-- i decided to use flutter instead of swift(which is apple-only)
 return {
   'nvim-flutter/flutter-tools.nvim',
   lazy = false,

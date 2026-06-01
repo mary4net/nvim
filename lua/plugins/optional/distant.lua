@@ -1,3 +1,4 @@
+-- for nvim + ssh access
 return {
   'chipsenkbeil/distant.nvim',
   branch = 'v0.3',
